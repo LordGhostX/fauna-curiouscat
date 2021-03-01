@@ -25,5 +25,10 @@ def dashboard():
     return render_template("dashboard.html")
 
 
+@app.route("/dashboard/questions/")
+def questions():
+    return render_template("questions.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
