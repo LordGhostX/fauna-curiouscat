@@ -35,5 +35,10 @@ def reply_question(question_id):
     return render_template("reply-question.html")
 
 
+@app.route("/u/<string:user_id>/")
+def ask_question(user_id):
+    return render_template("ask-question.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
