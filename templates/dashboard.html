@@ -1,0 +1,70 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-12">
+      <div class="jumbotron text-center p-4">
+        <h2>Fauna Powered CuriousCat</h2>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card text-center">
+        <h5 class="card-header">Total Questions Asked</h5>
+        <div class="card-body">
+          <h2 class="card-title">100</h2>
+          <a href="#" class="btn btn-success">See All Questions</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card text-center">
+        <h5 class="card-header">Total Answered Questions</h5>
+        <div class="card-body">
+          <h2 class="card-title">100</h2>
+          <a href="#" class="btn btn-success">See Questions</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card text-center">
+        <h5 class="card-header">Total Unanswered Questions</h5>
+        <div class="card-body">
+          <h2 class="card-title">100</h2>
+          <a href="#" class="btn btn-success">See Questions</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8 mt-4">
+      <form class="text-center">
+        <div class="form-group">
+          <label>Profile Link</label>
+          <input type="text" id="profileLink" class="form-control" value="http://faunacuriouscat.com/u/lordghostx" readonly>
+          <small class="form-text text-muted">Share this link with friends so they can ask you questions</small>
+        </div>
+        <button type="button" class="btn btn-success" onclick="copyProfileLink()">Copy Profile Link</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function copyProfileLink() {
+    /* Get the text field */
+    var copyText = document.getElementById("profileLink");
+
+    /* Select the text field */
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+    /* Copy the text inside the text field */
+    document.execCommand("copy");
+
+    alert("Successfully copied profile link to clipboard!");
+  }
+</script>
+{% endblock %}
