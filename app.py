@@ -68,8 +68,13 @@ def reply_question(question_id):
 
 
 @app.route("/u/<string:user_id>/")
+def view_profile(user_id):
+    return render_template("view-profile.html")
+
+
+@app.route("/u/<string:user_id>/ask/")
 def ask_question(user_id):
-    return render_template("ask-question.html")
+    return render_template("questions.html")
 
 
 if __name__ == "__main__":
