@@ -1,5 +1,6 @@
 import pytz
 import hashlib
+from functools import wraps
 from datetime import datetime
 from flask import *
 from flask_bootstrap import Bootstrap
@@ -15,6 +16,16 @@ client = FaunaClient(secret="your-secret-here")
 
 def encrypt_password(password):
     return hashlib.sha512(password.encode()).hexdigest()
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if "user" not in session:
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+
+    return decorated
 
 
 @app.route("/")
@@ -76,16 +87,19 @@ def login():
 
 
 @app.route("/dashboard/")
+@login_required
 def dashboard():
     return render_template("dashboard.html")
 
 
 @app.route("/dashboard/questions/")
+@login_required
 def questions():
     return render_template("questions.html")
 
 
 @app.route("/dashboard/questions/<string:question_id>/")
+@login_required
 def reply_question(question_id):
     return render_template("reply-question.html")
 
