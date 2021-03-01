@@ -17,7 +17,7 @@
         </div>
         <div class="card-body">
           <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          <a href="#" class="btn btn-success">Reply Question</a>
+          <a href="{{ url_for('reply_question', question_id='test') }}" class="btn btn-success">Reply Question</a>
         </div>
       </div>
     </div>
@@ -44,6 +44,7 @@
         </div>
       </div>
     </div>
+    <a href="{{ url_for('dashboard') }}"><button type="button" class="btn btn-warning m-3">Back to Dashboard</button></a>
   </div>
 </div>
 {% endblock %}
