@@ -14,7 +14,7 @@
       <div class="card text-center">
         <h5 class="card-header">Total Questions Asked</h5>
         <div class="card-body">
-          <h2 class="card-title">200</h2>
+          <h2 class="card-title">{{ answered_questions + unanswered_questions }}</h2>
           <a href="{{ url_for('questions') }}" class="btn btn-success">See All Questions</a>
         </div>
       </div>
@@ -24,7 +24,7 @@
       <div class="card text-center">
         <h5 class="card-header">Total Answered Questions</h5>
         <div class="card-body">
-          <h2 class="card-title">100</h2>
+          <h2 class="card-title">{{ answered_questions }}</h2>
           <a href="#" class="btn btn-success">See Questions</a>
         </div>
       </div>
@@ -34,7 +34,7 @@
       <div class="card text-center">
         <h5 class="card-header">Total Unanswered Questions</h5>
         <div class="card-body">
-          <h2 class="card-title">100</h2>
+          <h2 class="card-title">{{ unanswered_questions }}</h2>
           <a href="#" class="btn btn-success">See Questions</a>
         </div>
       </div>
@@ -44,7 +44,7 @@
       <form class="text-center">
         <div class="form-group">
           <label>Profile Link</label>
-          <input type="text" id="profileLink" class="form-control" value="http://faunacuriouscat.com/u/lordghostx" readonly>
+          <input type="text" id="profileLink" class="form-control" value="http://{{ request.host + url_for('view_profile', user_id=session.user.username) }}" readonly>
           <small class="form-text text-muted">Share this link with friends so they can ask you questions</small>
         </div>
         <button type="button" class="btn btn-success" onclick="copyProfileLink()">Copy Profile Link</button>

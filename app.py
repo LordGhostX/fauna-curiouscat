@@ -89,7 +89,12 @@ def login():
 @app.route("/dashboard/")
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    answered_questions = client.query(q.count(q.paginate(
+        q.match(q.index("questions_index"), True, session["user"]["username"]), size=100)))["data"][0]
+    unanswered_questions = client.query(q.count(q.paginate(
+        q.match(q.index("questions_index"), False, session["user"]["username"]), size=100)))["data"][0]
+
+    return render_template("dashboard.html", answered_questions=answered_questions, unanswered_questions=unanswered_questions)
 
 
 @app.route("/dashboard/questions/")
