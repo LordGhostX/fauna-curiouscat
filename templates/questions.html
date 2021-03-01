@@ -4,12 +4,13 @@
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-lg-12">
-      <div class="jumbotron text-center p-4">
+      <div class="jumbotron text-center p-4" style="margin-bottom: 0px">
         <h2>Fauna Powered CuriousCat</h2>
         <h5>All Profile Questions</h5>
       </div>
     </div>
 
+    <a href="{{ url_for('dashboard') }}"><button type="button" class="btn btn-warning m-3">Back to Dashboard</button></a>
     <div class="col-lg-12">
       <div class="card">
         <div class="card-header">
@@ -44,7 +45,6 @@
         </div>
       </div>
     </div>
-    <a href="{{ url_for('dashboard') }}"><button type="button" class="btn btn-warning m-3">Back to Dashboard</button></a>
   </div>
 </div>
 {% endblock %}

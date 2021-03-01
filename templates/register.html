@@ -11,6 +11,13 @@
     </div>
 
     <div class="col-lg-6">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <p class="text-{{ category }}">{{ message }}</p>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
       <form method="POST">
         <div class="form-group">
           <label for="username">Username</label>

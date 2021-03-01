@@ -1,8 +1,20 @@
+import pytz
+import hashlib
+from datetime import datetime
 from flask import *
 from flask_bootstrap import Bootstrap
+from faunadb import query as q
+from faunadb.objects import Ref
+from faunadb.client import FaunaClient
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "APP_SECRET_KEY"
 Bootstrap(app)
+client = FaunaClient(secret="your-secret-here")
+
+
+def encrypt_password(password):
+    return hashlib.sha512(password.encode()).hexdigest()
 
 
 @app.route("/")
@@ -10,8 +22,28 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/register/")
+@app.route("/register/", methods=["GET", "POST"])
 def register():
+    if request.method == "POST":
+        username = request.form.get("username").strip().lower()
+        password = request.form.get("password")
+
+        try:
+            user = client.query(
+                q.get(q.match(q.index("users_index"), username)))
+            flash("The account you are trying to create already exists!", "danger")
+        except:
+            user = client.query(q.create(q.collection("users"), {
+                "data": {
+                    "username": username,
+                    "password": encrypt_password(password),
+                    "date": datetime.now(pytz.UTC)
+                }
+            }))
+            flash(
+                "You have successfully created your account, you can proceed to login!", "success")
+        return redirect(url_for("register"))
+
     return render_template("register.html")
 
 
