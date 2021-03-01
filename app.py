@@ -47,8 +47,31 @@ def register():
     return render_template("register.html")
 
 
-@app.route("/login/")
+@app.route("/login/", methods=["GET", "POST"])
 def login():
+    if "user" in session:
+        return redirect(url_for("dashboard"))
+
+    if request.method == "POST":
+        username = request.form.get("username").strip().lower()
+        password = request.form.get("password")
+
+        try:
+            user = client.query(
+                q.get(q.match(q.index("users_index"), username)))
+            if encrypt_password(password) == user["data"]["password"]:
+                session["user"] = {
+                    "id": user["ref"].id(),
+                    "username": user["data"]["username"]
+                }
+                return redirect(url_for("dashboard"))
+            else:
+                raise Exception()
+        except:
+            flash(
+                "You have supplied invalid login credentials, please try again!", "danger")
+        return redirect(url_for("login"))
+
     return render_template("login.html")
 
 
