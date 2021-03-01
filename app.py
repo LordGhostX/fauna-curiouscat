@@ -30,5 +30,10 @@ def questions():
     return render_template("questions.html")
 
 
+@app.route("/dashboard/questions/<string:question_id>/")
+def reply_question(question_id):
+    return render_template("reply-question.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
