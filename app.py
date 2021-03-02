@@ -200,7 +200,18 @@ def reply_question(question_id):
 
 @app.route("/u/<string:username>/")
 def view_profile(username):
-    return render_template("view-profile.html")
+    question_indexes = client.query(
+        q.paginate(
+            q.match(q.index("questions_index"), True, username),
+            size=100_000
+        )
+    )
+    questions = [
+        q.get(
+            q.ref(q.collection("questions"), i.id())
+        ) for i in question_indexes["data"]
+    ]
+    return render_template("view-profile.html", username=username, questions=client.query(questions)[::-1])
 
 
 @app.route("/u/<string:username>/ask/", methods=["GET", "POST"])
@@ -233,7 +244,7 @@ def ask_question(username):
             )
         )
         flash(f"You have successfully asked {username} a question!", "success")
-        return redirect(url_for("ask_question"))
+        return redirect(url_for("ask_question", username=username))
 
     return render_template("ask-question.html", username=username)
 
