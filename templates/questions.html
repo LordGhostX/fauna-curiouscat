@@ -21,7 +21,7 @@
           <p class="card-text">{{ i.data.question }}</p>
           <a href="{{ url_for('reply_question', question_id=i.ref.id()) }}" class="btn btn-success">
             {% if i.data.resolved %}
-            Edit Reply
+            Edit Response
             {% else %}
             Reply Question
             {% endif %}

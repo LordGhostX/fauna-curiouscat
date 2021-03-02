@@ -148,7 +148,18 @@ def questions():
 @app.route("/dashboard/questions/<string:question_id>/")
 @login_required
 def reply_question(question_id):
-    return render_template("reply-question.html")
+    try:
+        question = client.query(
+            q.get(
+                q.ref(q.collection("questions"), question_id)
+            )
+        )
+        if question["data"]["user_asked"] != session["user"]["username"]:
+            raise Exception()
+    except:
+        abort(404)
+
+    return render_template("reply-question.html", question=question)
 
 
 @app.route("/u/<string:user_id>/")
