@@ -130,15 +130,35 @@ def dashboard():
 @login_required
 def questions():
     username = session["user"]["username"]
-    question_indexes = client.query(
-        q.paginate(
-            q.union(
+    question_type = request.args.get("type", "all").lower()
+
+    if question_type == "answered":
+        question_indexes = client.query(
+            q.paginate(
                 q.match(q.index("questions_index"), True, username),
-                q.match(q.index("questions_index"), False, username)
-            ),
-            size=100_000
+                size=100_000
+            )
         )
-    )
+    elif question_type == "unanswered":
+        question_indexes = client.query(
+            q.paginate(
+                q.match(q.index("questions_index"), False, username),
+                size=100_000
+            )
+        )
+    elif question_type == "all":
+        question_indexes = client.query(
+            q.paginate(
+                q.union(
+                    q.match(q.index("questions_index"), True, username),
+                    q.match(q.index("questions_index"), False, username)
+                ),
+                size=100_000
+            )
+        )
+    else:
+        return redirect(url_for("questions"))
+
     questions = [
         q.get(
             q.ref(q.collection("questions"), i.id())
