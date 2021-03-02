@@ -14,6 +14,13 @@ Bootstrap(app)
 client = FaunaClient(secret="your-secret-here")
 
 
+def faunatimefilter(faunatime):
+    return faunatime.to_datetime().strftime("%d/%m/%Y %H:%M UTC")
+
+
+app.jinja_env.filters["faunatimefilter"] = faunatimefilter
+
+
 def encrypt_password(password):
     return hashlib.sha512(password.encode()).hexdigest()
 
@@ -41,16 +48,21 @@ def register():
 
         try:
             user = client.query(
-                q.get(q.match(q.index("users_index"), username)))
+                q.get(
+                    q.match(q.index("users_index"), username)
+                )
+            )
             flash("The account you are trying to create already exists!", "danger")
         except:
-            user = client.query(q.create(q.collection("users"), {
-                "data": {
-                    "username": username,
-                    "password": encrypt_password(password),
-                    "date": datetime.now(pytz.UTC)
-                }
-            }))
+            user = client.query(
+                q.create(q.collection("users"), {
+                    "data": {
+                        "username": username,
+                        "password": encrypt_password(password),
+                        "date": datetime.now(pytz.UTC)
+                    }
+                })
+            )
             flash(
                 "You have successfully created your account, you can proceed to login!", "success")
         return redirect(url_for("register"))
@@ -69,7 +81,10 @@ def login():
 
         try:
             user = client.query(
-                q.get(q.match(q.index("users_index"), username)))
+                q.get(
+                    q.match(q.index("users_index"), username)
+                )
+            )
             if encrypt_password(password) == user["data"]["password"]:
                 session["user"] = {
                     "id": user["ref"].id(),
@@ -91,10 +106,18 @@ def login():
 def dashboard():
     username = session["user"]["username"]
     queries = [
-        q.count(q.paginate(
-            q.match(q.index("questions_index"), True, username), size=100_000)),
-        q.count(q.paginate(
-            q.match(q.index("questions_index"), False, username), size=100_000))
+        q.count(
+            q.paginate(
+                q.match(q.index("questions_index"), True, username),
+                size=100_000
+            )
+        ),
+        q.count(
+            q.paginate(
+                q.match(q.index("questions_index"), False, username),
+                size=100_000
+            )
+        )
     ]
     answered_questions, unanswered_questions = client.query(queries)
 
@@ -104,7 +127,22 @@ def dashboard():
 @app.route("/dashboard/questions/")
 @login_required
 def questions():
-    return render_template("questions.html")
+    username = session["user"]["username"]
+    question_indexes = client.query(
+        q.paginate(
+            q.union(
+                q.match(q.index("questions_index"), True, username),
+                q.match(q.index("questions_index"), False, username)
+            ),
+            size=100_000
+        )
+    )
+    questions = [
+        q.get(
+            q.ref(q.collection("questions"), i.id())
+        ) for i in question_indexes["data"]
+    ]
+    return render_template("questions.html", questions=client.query(questions)[::-1])
 
 
 @app.route("/dashboard/questions/<string:question_id>/")
