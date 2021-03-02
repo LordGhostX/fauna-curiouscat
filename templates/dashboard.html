@@ -44,7 +44,7 @@
       <form class="text-center">
         <div class="form-group">
           <label>Profile Link</label>
-          <input type="text" id="profileLink" class="form-control" value="http://{{ request.host + url_for('view_profile', user_id=session.user.username) }}" readonly>
+          <input type="text" id="profileLink" class="form-control" value="http://{{ request.host + url_for('view_profile', username=session.user.username) }}" readonly>
           <small class="form-text text-muted">Share this link with friends so they can ask you questions</small>
         </div>
         <button type="button" class="btn btn-success mb-5" onclick="copyProfileLink()">Copy Profile Link</button>

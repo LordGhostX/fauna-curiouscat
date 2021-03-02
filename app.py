@@ -198,14 +198,44 @@ def reply_question(question_id):
     return render_template("reply-question.html", question=question)
 
 
-@app.route("/u/<string:user_id>/")
-def view_profile(user_id):
+@app.route("/u/<string:username>/")
+def view_profile(username):
     return render_template("view-profile.html")
 
 
-@app.route("/u/<string:user_id>/ask/")
-def ask_question(user_id):
-    return render_template("questions.html")
+@app.route("/u/<string:username>/ask/", methods=["GET", "POST"])
+def ask_question(username):
+    try:
+        question = client.query(
+            q.get(
+                q.match(q.index("users_index"), username)
+            )
+        )
+    except:
+        abort(404)
+
+    if request.method == "POST":
+        user_asking = request.form.get("user_asking", "").strip().lower()
+        question = request.form.get("question").strip()
+
+        question = client.query(
+            q.create(
+                q.collection("questions"), {
+                    "data": {
+                        "resolved": False,
+                        "user_asked": username,
+                        "question": question,
+                        "user_asking": "anonymous" if user_asking == "" else user_asking,
+                        "answer": "",
+                        "date": datetime.now(pytz.UTC)
+                    }
+                }
+            )
+        )
+        flash(f"You have successfully asked {username} a question!", "success")
+        return redirect(url_for("ask_question"))
+
+    return render_template("ask-question.html", username=username)
 
 
 if __name__ == "__main__":
