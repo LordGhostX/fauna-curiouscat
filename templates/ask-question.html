@@ -28,7 +28,7 @@
           <textarea class="form-control" rows="5" name="question" placeholder="Ask your question here" required></textarea>
         </div>
         <button type="submit" class="btn btn-success">Ask Question</button>
-        <a href="{{ url_for('index') }}"><button type="button" class="btn btn-warning">View {{ username }} Profile</button></a>
+        <a href="{{ url_for('view_profile', username=username) }}"><button type="button" class="btn btn-warning">View {{ username }} Profile</button></a>
       </form>
     </div>
   </div>
