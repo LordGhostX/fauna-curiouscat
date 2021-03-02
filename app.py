@@ -55,13 +55,15 @@ def register():
             flash("The account you are trying to create already exists!", "danger")
         except:
             user = client.query(
-                q.create(q.collection("users"), {
-                    "data": {
-                        "username": username,
-                        "password": encrypt_password(password),
-                        "date": datetime.now(pytz.UTC)
+                q.create(
+                    q.collection("users"), {
+                        "data": {
+                            "username": username,
+                            "password": encrypt_password(password),
+                            "date": datetime.now(pytz.UTC)
+                        }
                     }
-                })
+                )
             )
             flash(
                 "You have successfully created your account, you can proceed to login!", "success")
@@ -145,7 +147,7 @@ def questions():
     return render_template("questions.html", questions=client.query(questions)[::-1])
 
 
-@app.route("/dashboard/questions/<string:question_id>/")
+@app.route("/dashboard/questions/<string:question_id>/", methods=["GET", "POST"])
 @login_required
 def reply_question(question_id):
     try:
@@ -158,6 +160,20 @@ def reply_question(question_id):
             raise Exception()
     except:
         abort(404)
+
+    if request.method == "POST":
+        client.query(
+            q.update(
+                q.ref(q.collection("questions"), question_id), {
+                    "data": {
+                        "answer": request.form.get("reply").strip(),
+                        "resolved": True
+                    }
+                }
+            )
+        )
+        flash("You have successfully responded to this question!", "success")
+        return redirect(url_for("reply_question", question_id=question_id))
 
     return render_template("reply-question.html", question=question)
 
