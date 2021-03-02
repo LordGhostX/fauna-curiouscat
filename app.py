@@ -200,6 +200,15 @@ def reply_question(question_id):
 
 @app.route("/u/<string:username>/")
 def view_profile(username):
+    try:
+        user = client.query(
+            q.get(
+                q.match(q.index("users_index"), username)
+            )
+        )
+    except:
+        abort(404)
+
     question_indexes = client.query(
         q.paginate(
             q.match(q.index("questions_index"), True, username),
@@ -217,7 +226,7 @@ def view_profile(username):
 @app.route("/u/<string:username>/ask/", methods=["GET", "POST"])
 def ask_question(username):
     try:
-        question = client.query(
+        user = client.query(
             q.get(
                 q.match(q.index("users_index"), username)
             )
@@ -247,6 +256,20 @@ def ask_question(username):
         return redirect(url_for("ask_question", username=username))
 
     return render_template("ask-question.html", username=username)
+
+
+@app.route("/q/<string:question_id>/")
+def view_question(question_id):
+    try:
+        question = client.query(
+            q.get(
+                q.ref(q.collection("questions"), question_id)
+            )
+        )
+    except:
+        abort(404)
+
+    return render_template("view-question.html", question=question)
 
 
 if __name__ == "__main__":

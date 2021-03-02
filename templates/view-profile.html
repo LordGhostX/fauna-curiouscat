@@ -19,9 +19,7 @@
         </div>
         <div class="card-body">
           <p class="card-text">{{ i.data.question }}</p>
-          <a href="#" class="btn btn-success">
-            View Response
-          </a>
+          <a href="{{ url_for('view_question', question_id=i.ref.id()) }}" class="btn btn-success">View Response</a>
         </div>
       </div>
     </div>
