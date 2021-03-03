@@ -236,7 +236,7 @@ def ask_question(username):
 
     if request.method == "POST":
         user_asking = request.form.get("user_asking", "").strip().lower()
-        question = request.form.get("question").strip()
+        question_text = request.form.get("question").strip()
 
         question = client.query(
             q.create(
@@ -244,7 +244,7 @@ def ask_question(username):
                     "data": {
                         "resolved": False,
                         "user_asked": username,
-                        "question": question,
+                        "question": question_text,
                         "user_asking": "anonymous" if user_asking == "" else user_asking,
                         "answer": "",
                         "date": datetime.now(pytz.UTC)
